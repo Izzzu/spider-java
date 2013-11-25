@@ -44,7 +44,11 @@ public class Test1 {
                 
             }
             if (!czyOdwiedzony(conn, link))
-            dodajLinkDoTabeli(conn, link, "linki_do_odwiedzenia");
+            {
+            	if (link.length()>250) link = link.substring(0, 250);
+            	dodajLinkDoTabeli(conn, link, "linki_do_odwiedzenia");
+            }
+            
             //System.out.println(count);
         }
         //return znalezioneLinki;
@@ -66,7 +70,7 @@ public class Test1 {
 
     }
     
-    private void dodajLinkDoTabeli(Connection conn, String link, String nazwatabeli) 
+    private void dodajLinkDoTabeli(Connection conn, String link, String nazwatabeli)
             throws SQLException {
         PreparedStatement pstmt = conn.prepareStatement("INSERT INTO "+nazwatabeli+" (adres, datadodania)" + " VALUES (?,?)");
         pstmt.setString(1, link);
@@ -75,22 +79,22 @@ public class Test1 {
     }
     
     private boolean czyOdwiedzony(Connection conn, String link) throws SQLException {
-    	Statement stmt = conn.createStatement();
-    	ResultSet rs = stmt.executeQuery("Select adres from linki_odwiedzone where adres LIKE '"+link+"'");
-    	if (rs.next()) 
-    		{
-    		System.out.println("LINK -----------> " + link + " zostal juz odwiedzony");
-    		return true;
-    		}
-    	return false;
-    	
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("Select adres from linki_odwiedzone where adres LIKE '"+link+"'");
+            if (rs.next())
+                    {
+                    System.out.println("LINK -----------> " + link + " zostal juz odwiedzony");
+                    return true;
+                    }
+            return false;
+            
     }
     @SuppressWarnings("resource")
-	public static void main(String[] a) {
+        public static void main(String[] a) {
         Test1 od = new Test1();
             try {
-            	
-            	
+                    
+                    
         Class.forName("org.h2.Driver");
         Connection conn = DriverManager.
             getConnection("jdbc:h2:tcp://localhost/~/test", "sa", "");
@@ -106,7 +110,7 @@ public class Test1 {
             int id = rs.getInt("id");
             String aktualnyLink = rs.getString("adres");
             Timestamp dataDodania = rs.getTimestamp("datadodania");
-            System.out.println("Rekord id: " +id +  " \nadres: " + aktualnyLink + " \ndata dodania: "  + dataDodania);
+            System.out.println("Rekord id: " +id + " \nadres: " + aktualnyLink + " \ndata dodania: " + dataDodania);
 
             try {
                 URL u = new URL(aktualnyLink);
@@ -121,7 +125,7 @@ public class Test1 {
             }
             catch (FileNotFoundException ex) {
                 System.out.println("Nie mozna znalezc pliku");
-            } 
+            }
             catch (IOException ex) {
                 System.out.println("Blad we/wy");
             }
